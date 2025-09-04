@@ -64,7 +64,7 @@ export class FwAvatar extends HTMLElement {
 }
 ```
 
-This means that, in case elements are created both declaratively and dynamically, there have to be, at least, **two** places with knowledge 
+This means that, in case elements are created both declaratively and dynamically, there have to be, at least, two places with knowledge 
 of how to style such an element. The first place is where HTTP response documents are generated and secondly, at the 
 element itself.
 
