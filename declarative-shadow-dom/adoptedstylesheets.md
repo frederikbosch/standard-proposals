@@ -1,6 +1,6 @@
 # Reply to the proposal of the `shadowrootadoptedstylesheets` attribute in the `<template>` tag
 
-The current standard proposal is very promising and even enough I have some remarks to make, I love the direction this is going. In this
+The current standard proposal is very promising and even though I have some remarks, I love the direction this is going. In this
 reply I will not go into CSS modules, importmaps or how to register a stylesheet using a specifier. I will go into how stylesheets
 are adopted.
 
@@ -15,7 +15,8 @@ dynamically inside web applications, I am seeing at the least three problems wit
 
 ### Problem 1: declarative and dynamic contexts: is my element ready to be displayed?
 
-Consider the following avatar custom element. Its shadow DOM is created declaratively.
+This problem is only applicable to custom elements and not to Shadow DOMs linked to non-custom elements. Consider the following avatar custom 
+element. Its shadow DOM is created declaratively.
 
 ```html
 <style type="module" specifier="fw-avatar">...</style>
@@ -68,8 +69,7 @@ export class FwAvatar extends HTMLElement {
 
 This means that, in case elements are created both declaratively and dynamically, there have to be, at least, two places with knowledge 
 of how to style such an element. The first place is where HTTP response documents are generated and secondly, at the 
-element itself. Is this inevitable when an element has to be rendered both declaratively and dynamically? Isn't it a definition of a
-*component* that it *combines* technology?
+element itself. Is this inevitable when an element has to be rendered both declaratively and dynamically?
 
 Moreover, the suggested solution is flawed. Suppose we want to change the adopted stylesheets into only `my-fw-avatar`? In a declarative
 context this is easy, you simply change the `shadowrootadoptedstylesheets` attribute.
@@ -88,26 +88,26 @@ The dynamic context is way harder. If the class `FwAvatar` is coming from an ext
 the creator of the element - the one calling `document.createElement` - has to do an additional call.
 
 ```js
+// import our own styles
 import myStyles from 'my-fw-avatar' with { type: 'css' };
 
 for (const person of people) {
-  // .adoptedStyleSheets get populated with the fw-avatar stylesheet inside the constructor of fw-avatar
   const avatar = document.createElement('fw-avatar');
-
   // overwrite with our own styles
   avatar.shadowRoot.adoptedStyleSheets = [myStyles];
 }
 ```
 
-But this requires **both** the framework and the overwrite styles to be inside the original response document. Why? Because if the `fw-avatar` specifier is missing, the 
-following line will throw an error.
+This works, but only when the `FwAvatar` class does not add its own stylesheet. When it would add its own stylesheet, and it is likely that a ui framework comes with its own/default
+stylesheet, this requires **both** the framework and the overwrite styles to be inside the original response document. Why? Because if the `fw-avatar` specifier is missing, the 
+following line inside the `FwAvatar` class will throw an error.
 
 ```js
 import styles from 'fw-avatar' with { type: 'css' };
 ```
 
-So, if we want an optimal solution, we must change the `FwAvatar` class as such that the `fw-avatar` becomes conditional. However, that generates another problem, 
-the avatar class cannot load the css inside its constructor since we'd then have to make a dynamic `import()` call or embed the raw css also in our component.
+So, if we want an optimal solution, we must change the `FwAvatar` class as such that the `fw-avatar` does not contain a stylesheet by default or this default stylesheet becomes 
+conditional. However,  a conditional stylesheet generates another problem, the import has to become a dynamic `import()` call or the raw css should also be embedded inside the custom element.
 
 ### Problem 2: will we get a `<template>` soup, especially when using a ui-framework?
 
@@ -141,9 +141,10 @@ therefore not given here. With the current proposals the response document might
         </header>
         <discussion-content>
           <template shadowrootmode="open" shadowrootadoptedstylesheets="discussion-content">
-            <p></p>
-            <p></p>
+            <slot></slot>
           </template>
+          <p></p>
+          <p></p>
         </discussion-content>
         <footer>
           <discussion-likes>
@@ -161,7 +162,7 @@ therefore not given here. With the current proposals the response document might
             </template>
           </discussion-likes>
         </footer>
-        <fw-button commandfor="message-1234" command="like">
+        <fw-button>
           <template shadowrootmode="open" shadowrootadoptedstylesheets="fw-button">
             <button commandfor="feed" command="reply">Create reply</button>
           </template>
@@ -191,7 +192,8 @@ therefore not given here. With the current proposals the response document might
 ```
 
 Such an example is becoming a very verbose. Especially when someone would like to use a custom-element framework like [shoelace](https://shoelace.style). All these 
-elements would require a `<template>` tag with a required `shadowrootmode="open"` and a `shadowrootadoptedstylesheets` to make sure it is styled.
+elements would require a `<template>` tag with a required `shadowrootmode="open"` and a `shadowrootadoptedstylesheets` to make sure it is styled. The above also
+applies to shadow roots attached to non-custom elements.
 
 ### Problem 3: complexity at the server side
 
@@ -215,15 +217,164 @@ When we could write this?
 So, what will inevitably happen is the creation of a custom elements registry at the server side level. Not only for elements created by the development teams,
 but also for the elements that are being consumed.
 
-## Consumption at the host
+## Solution, consumption at the host
 
 As I have already been suggesting in the reply to the [TAG design review request](https://github.com/w3ctag/design-reviews/issues/1000), I think modules should be consumed 
 at the host element, not by the template tag. To take the example of the `fw-avatar`.
 
-```
+```html
+<style type="module" specifier="fw-avatar">img { border-radius: 100%; }</style>
 <fw-avatar host-for="fw-avatar">
   <template shadowrootmode="open">
     <img src="" alt="">
   </template>
 </fw-avatar>
 ```
+
+This would also work for shadow roots attached to other elements.
+
+```html
+<style type="module" specifier="my-avatar">img { border-radius: 100%; }</style>
+<div host-for="my-avatar">
+  <template shadowrootmode="open">
+    <img src="" alt="">
+  </template>
+</fw-avatar>
+```
+
+Now, as a rule, we could say that the `host-for` attribute equals tag name, only in case of custom elements. This changes the first example into the following, and the image would
+still have its `border-radius`.
+
+```html
+<style type="module" specifier="fw-avatar">img { border-radius: 100%; }</style>
+<fw-avatar>
+  <template shadowrootmode="open">
+    <img src="" alt="">
+  </template>
+</fw-avatar>
+```
+
+The last suggestion also solves problem 1 and 2. When `fw-avatar` is created dynamically, it automatically adopts the `fw-avatar` stylesheet because its `host-for` attribute by 
+default equals to its tag name. The framework designer can leave out the css in their component and supply default stylesheet with their library.
+
+Now if we would want to change the stylesheet into `my-fw-avatar`, we could decide to change the `host-for` attribute both contexts.
+
+```html
+<style type="module" specifier="my-fw-avatar">img { border-radius: 100%; }</style>
+<fw-avatar host-for="my-fw-avatar">
+  <template shadowrootmode="open">
+    <img src="" alt="">
+  </template>
+</fw-avatar>
+```
+
+```js
+document.createElement('fw-avatar', {
+    hostFor: 'my-fw-avatar'
+});
+```
+
+Hence, there is no requirement to change the `FwAvatar` class. But don't we now have to change our complete codebase to add this `host-for` attribute? There is another solution, 
+if we combine it with the `@sheet` proposal as is also done by the current proposal.
+
+```html
+<style type="module" specifier="framework">
+  @sheet fw_avatar {
+    img { border-radius: 100%; }
+  }
+</style>
+
+<style type="module" specifier="fw-avatar">
+  @import("framework/fw-avatar");
+</style>
+
+<fw-avatar>
+  <template shadowrootmode="open">
+    <img src="" alt="">
+  </template>
+</fw-avatar>
+```
+
+## Future Work
+
+Just as is suggested in the current proposal, we could extend the `host-for` attribute to host more than just stylesheets.
+
+```html
+<template type="module" specifier="fw-avatar">
+  <img src="{{@src}}" alt="{{@name}}">
+</template>
+
+<fw-avatar src="me.jpg" name="My Name">
+</fw-avatar>
+```
+
+```js
+const avatar = document.createElement('fw-avatar', {
+  attributes: {
+    src: 'me.jpg',
+    name: 'My Name',
+  }
+});
+avatar.setAttribute('src', 'me.jpg');
+```
+
+Or even better, combined with a `<definition>` suggestion I have seen somewhere (cannot recall where).
+
+```html
+<definition specifier="fw-avatar">
+  <template>
+    <img src="{{@src}}" alt="{{@name}}">
+  </template>
+  <style>img { border-radius: 100%; }</style>
+</definition>
+
+<fw-avatar src="me.jpg" name="My Name"></fw-avatar>
+
+Now let's regenerate the source code of our discussion feed.
+
+```html
+<definition specifier="discussion-feed">...</definition>
+<definition specifier="discussion-message">...</definition>
+<definition specifier="discussion-reply">...</definition>
+<definition specifier="discussion-content">...</definition>
+<definition specifier="discussion-likes">...</definition>
+<definition specifier="fw-avatar">...</definition>
+<definition specifier="fw-button">...</definition>
+<definition specifier="fw-dialog">...</definition>
+
+<discussion-feed id="feed">
+  <discussion-message id="message-1234">
+    <h1>Declarative CSS Modules and Declarative Shadow DOM adoptedstylesheets attribute</h1>
+    <header>
+      <fw-avatar src="me.jpg" alt="KurtCattiSchmidt"></fw-avatar>
+      <p class="author>KurtCattiSchmidt</p>
+      <time timestamp="">Oct 2, 2024</time>
+    </header>
+    <discussion-content>
+      <p></p>
+      <p></p>
+    </discussion-content>
+    <footer>
+      <discussion-likes number="5">
+        <fw-button commandfor="message-1234" command="like">Like</fw-button>
+      </discussion-likes>
+    </footer>
+    <fw-button commandfor="message-1234" command="like">Create reply</fw-button>
+    <fw-dialog>
+      <discussion-reply>
+        <form>
+          ...
+        </form>
+      </discussion-reply>
+    </fw-dialog>
+  </discussion-message>
+
+  {{#each replies as |reply|}}
+    <discussion-message id="message-1235">
+      ...
+    </discussion-message>
+  {{/each}}
+</discussion-feed>
+```
+
+That does, however, generate another discussion. Is the client that receives such a HTTP response able to read such a markup?
