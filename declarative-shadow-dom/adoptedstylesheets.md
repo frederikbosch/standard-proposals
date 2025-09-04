@@ -329,6 +329,7 @@ Or even better, combined with a `<definition>` suggestion I have seen somewhere 
 </definition>
 
 <fw-avatar src="me.jpg" name="My Name"></fw-avatar>
+```
 
 Now let's regenerate the source code of our discussion feed.
 
