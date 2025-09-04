@@ -382,5 +382,6 @@ the `<definition>` we can move all `<template>` declarations inside the `<defini
 `{{fw-avatar src="" alt=""}}` over `<fw-avatar src="" alt=""></fw-avatar>`? I don't think they any preference and would not even think to encapsulate
 the HTML markup.
 
-That does, however, generate another question. Is every client, like a search-engine, that receives such a HTTP response able to read such a markup? But,
-using `<template>` has become optional, they are not a requirement anymore for declarative custom elements in the `<body>` of our page.
+That does, however, generate another question. Is every client, like a search-engine, that receives such a HTTP response able to read such a markup? Whatever
+the answer to that question is, using the `<template>` tag has become optional. They are not a requirement anymore for declarative custom elements
+in the `<body>` of our page.
