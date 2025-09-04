@@ -297,7 +297,8 @@ if we combine it with the `@sheet` proposal as is also done by the current propo
 
 ## Future Work
 
-Just as is suggested in the current proposal, we could extend the `host-for` attribute to host more than just stylesheets.
+Just as is suggested in the current proposal, we could extend the `host-for` attribute to host more than just stylesheets. I saw some discussions on
+declarative templating. I think we'd have to consider this possibility.
 
 ```html
 <template type="module" specifier="fw-avatar">
@@ -322,6 +323,7 @@ Or even better, combined with a `<definition>` suggestion I have seen somewhere 
 
 ```html
 <definition specifier="fw-avatar">
+  <!-- definition can only contain modules, no module attribute required -->
   <template>
     <img src="{{@src}}" alt="{{@name}}">
   </template>
@@ -385,6 +387,22 @@ a possible `<definition>` tag in the future, we can move all `<template>` declar
 `{{fw-avatar src="" alt=""}}` over `<fw-avatar src="" alt=""></fw-avatar>`? I don't think they any preference and would not even think to encapsulate
 the HTML markup.
 
-That does, however, generate another question. Is every client, like a search-engine, that receives such a HTTP response able to read such a markup? Whatever
-the answer to that question is, using the `<template>` tag has become optional. They are not a requirement anymore for declarative custom elements
-in the `<body>` of our page.
+We could go much furher then. Why would we want to extend elements like `<button>` now? There is no need! We can use composition and pass the `commandfor` and `command` 
+attributes to the native `<button>` element. 
+
+```html
+<definition specifier="fw-button">
+  <template>
+    <button ?commandfor="{{@commandfor}}" ?command="{{@command}}">
+      <slot></slot>
+    </template>
+  </template>
+  <style>button { }</style>
+</definition>
+
+<fw-button commandfor="message-1234" command="like"></fw-button>
+```
+
+If we would ever get there, this would, among many others, generate a question. Is every client, like a search-engine, that receives such a HTTP response able to read such a 
+markup? Whatever the answer to that question is, using the `<template>` tag has become optional. They are not a requirement anymore for declarative custom elements
+in the `<body>` of our page, and this starts with the `host-for` attribute.
