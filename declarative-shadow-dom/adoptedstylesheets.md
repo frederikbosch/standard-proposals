@@ -359,7 +359,7 @@ Now let's regenerate the source code of our discussion feed.
     <h1>Declarative CSS Modules and Declarative Shadow DOM adoptedstylesheets attribute</h1>
     <header>
       <fw-avatar src="me.jpg" alt="KurtCattiSchmidt"></fw-avatar>
-      <p class="author>KurtCattiSchmidt</p>
+      <p class="author">KurtCattiSchmidt</p>
       <time timestamp="">Oct 2, 2024</time>
     </header>
     <discussion-content>
