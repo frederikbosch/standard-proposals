@@ -377,4 +377,10 @@ Now let's regenerate the source code of our discussion feed.
 </discussion-feed>
 ```
 
-That does, however, generate another discussion. Is every client, like a search-engine, that receives such a HTTP response able to read such a markup?
+Because of the `host-for` attribute, and because a custom element automatically has a `host-for` attribute that equals its tag name and with 
+the `<definition>` we can move all `<template>` declarations inside the `<definition>` tag. Now would a backend team prefer to write this
+`{{fw-avatar src="" alt=""}}` over `<fw-avatar src="" alt=""></fw-avatar>`? I don't think they any preference and would not even think to encapsulate
+the HTML markup.
+
+That does, however, generate another question. Is every client, like a search-engine, that receives such a HTTP response able to read such a markup? But,
+using `<template>` has become optional, they are not a requirement anymore for declarative custom elements in the `<body>` of our page.
