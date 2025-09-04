@@ -394,7 +394,7 @@ a possible `<definition>` tag in the future, we can move all `<template>` declar
 `{{fw-avatar src="" alt=""}}` over `<fw-avatar src="" alt=""></fw-avatar>`? I think they won't have any preference at all and would therefore not even think 
 to encapsulate this markup.
 
-We could go much furher then. Why would we want to extend elements like `<button>` now? There is no need! We can use composition and pass the `commandfor` and `command` 
+We could go much further then. Why would we want to extend elements like `<button>` now? There is no need! We can use composition and pass the `commandfor` and `command` 
 attributes to the native `<button>` element. 
 
 ```html
