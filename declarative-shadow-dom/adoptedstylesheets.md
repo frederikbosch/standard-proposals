@@ -13,7 +13,7 @@ dynamically inside web applications, I am seeing at the least three problems wit
 1. [`<template>` soup](#problem-2)
 1. [Requirement of serverside custom elements registries for all elements](#problem-3)
 
-After addressing these, I will propose [panother solution](#solution).
+After addressing these, I will propose [another solution](#solution).
 
 <a name="problem-1"></a> 
 ### Problem 1: declarative and dynamic contexts: is my element ready to be displayed?
