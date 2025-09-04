@@ -391,7 +391,7 @@ Now let's regenerate the source code of our discussion feed.
 
 Because of the `host-for` attribute, and because a custom element automatically has a `host-for` attribute that equals its tag name and with 
 a possible `<definition>` tag in the future, we can move all `<template>` declarations inside this `<definition>` tag. Now would a backend team prefer to write this
-`{{fw-avatar src="" alt=""}}` over `<fw-avatar src="" alt=""></fw-avatar>`? I don think they won't have any preference at all and would therefore not even think 
+`{{fw-avatar src="" alt=""}}` over `<fw-avatar src="" alt=""></fw-avatar>`? I think they won't have any preference at all and would therefore not even think 
 to encapsulate this markup.
 
 We could go much furher then. Why would we want to extend elements like `<button>` now? There is no need! We can use composition and pass the `commandfor` and `command` 
