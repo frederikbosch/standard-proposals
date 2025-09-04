@@ -64,8 +64,8 @@ export class FwAvatar extends HTMLElement {
 }
 ```
 
-This means that, in case elements are created both declaratively and dynamically, there have to be, at least, **two** places where there 
-has to be knowledge how to style such an element. The first place is where HTTP response documents are generated and secondly, at the 
+This means that, in case elements are created both declaratively and dynamically, there have to be, at least, **two** places with knowledge 
+of how to style such an element. The first place is where HTTP response documents are generated and secondly, at the 
 element itself.
 
 Moreover, the suggested solution has multiple problems. First of all, if the class `FwAvatar` is coming from an external library, the list 
