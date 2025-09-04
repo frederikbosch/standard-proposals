@@ -377,4 +377,4 @@ Now let's regenerate the source code of our discussion feed.
 </discussion-feed>
 ```
 
-That does, however, generate another discussion. Is the client that receives such a HTTP response able to read such a markup?
+That does, however, generate another discussion. Is every client, like a search-engine, that receives such a HTTP response able to read such a markup?
