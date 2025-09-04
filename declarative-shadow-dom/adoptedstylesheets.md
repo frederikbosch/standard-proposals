@@ -13,7 +13,7 @@ dynamically inside web applications, I am seeing at the least three problems wit
 1. `<template>` soup
 1. Requirement of serverside custom elements registries for all elements
 
-### Declarative and dynamic contexts: is my element ready to be displayed?
+### Problem 1: declarative and dynamic contexts: is my element ready to be displayed?
 
 Consider the following avatar custom element. Its shadow DOM is created declaratively.
 
@@ -45,9 +45,11 @@ for (const person of people) {
 
 Now, this creates a problem. When `fw-avatar` was parsed by the browser inside the response document, the `shadowrootadoptedstylesheets` attribute
 created the `CSSStyleSheet` and adopted it into the [`host.shadowRoot`](https://developer.mozilla.org/en-US/docs/Web/API/ShadowRoot/adoptedStyleSheets).
-But now that the element is created dynamically in Javascript we need a second solution. This *could* look like this.
+But now that the element is created dynamically in Javascript we need a second solution, one the second solution needs to verify the first solution is not
+applicable. This *could* look like this.
 
 ```js
+// import a reference to the CSSStyleSheet available through <style specifier="fw-avatar">, which is already inside the document
 import styles from 'fw-avatar' with { type: 'css' };
 
 export class FwAvatar extends HTMLElement {
@@ -66,33 +68,50 @@ export class FwAvatar extends HTMLElement {
 
 This means that, in case elements are created both declaratively and dynamically, there have to be, at least, two places with knowledge 
 of how to style such an element. The first place is where HTTP response documents are generated and secondly, at the 
-element itself.
+element itself. Is this inevitable when an element has to be rendered both declaratively and dynamically? Isn't it a definition of a
+*component* that it *combines* technology?
 
-Moreover, the suggested solution has multiple problems. First of all, if the class `FwAvatar` is coming from an external library, the list 
-of stylesheets inside the declarative element must be overwritten after the element was created.
+Moreover, the suggested solution is flawed. Suppose we want to change the adopted stylesheets into only `my-fw-avatar`? In a declarative
+context this is easy, you simply change the `shadowrootadoptedstylesheets` attribute.
 
-```js
-// we cannot do this inside FwAvatar because it is inside node_modules
-import myStyles from 'my-fw-avatar' with { type: 'css' };
+```html
+<style type="module" specifier="my-fw-avatar">...</style>
 
-// .adoptedStyleSheets get populated inside the constructor of fw-avatar
-const avatar = document.createElement('fw-avatar');
-
-// overwrite with our own styles
-avatar.shadowRoot.adoptedStyleSheets = [myStyles];
+<fw-avatar>
+  <template shadowrootmode="open" shadowrootadoptedstylesheets="my-fw-avatar">
+    <img src="" alt="">
+  </template>
+</fw-avatar>
 ```
 
-But this requires **both** the framework styles to be inside the original response document. Why? Because if they are not, the following
-line will fail.
+The dynamic context is way harder. If the class `FwAvatar` is coming from an external library, and its contents cannot be touched inside the current context of the developer, 
+the creator of the element - the one calling `document.createElement` - has to do an additional call.
+
+```js
+import myStyles from 'my-fw-avatar' with { type: 'css' };
+
+for (const person of people) {
+  // .adoptedStyleSheets get populated with the fw-avatar stylesheet inside the constructor of fw-avatar
+  const avatar = document.createElement('fw-avatar');
+
+  // overwrite with our own styles
+  avatar.shadowRoot.adoptedStyleSheets = [myStyles];
+}
+```
+
+But this requires **both** the framework and the overwrite styles to be inside the original response document. Why? Because if the `fw-avatar` specifier is missing, the 
+following line will throw an error.
 
 ```js
 import styles from 'fw-avatar' with { type: 'css' };
 ```
 
+So, if we want an optimal solution, we must change the `FwAvatar` class as such that the `fw-avatar` becomes conditional. However, that generates another problem, 
+the avatar class cannot load the css inside its constructor since we'd then have to make a dynamic `import()` call or embed the raw css also in our component.
 
-### Will we get a `<template>` soup, especially when using a ui-framework?
+### Problem 2: will we get a `<template>` soup, especially when using a ui-framework?
 
-Let's take an example of this custom element I have recently been working on: a discussion feed with messages and the possibility to reply. It
+Let's take an example of a custom element I have recently been working on: a discussion feed with messages and the possibility to reply. It
 might be a requirement that such a feed be rendered declaratively. Reasons for such a requirement are discussed in another Github thread and
 therefore not given here. With the current proposals the response document might look like this.
 
@@ -172,9 +191,9 @@ therefore not given here. With the current proposals the response document might
 ```
 
 Such an example is becoming a very verbose. Especially when someone would like to use a custom-element framework like [shoelace](https://shoelace.style). All these 
-elements require a `<template>` tag with a required `shadowrootmode="open"` and a `shadowrootadoptedstylesheets` to make sure it is styled.
+elements would require a `<template>` tag with a required `shadowrootmode="open"` and a `shadowrootadoptedstylesheets` to make sure it is styled.
 
-### Complexity at the server side
+### Problem 3: complexity at the server side
 
 When rendering the document mentioned above, a discussion for backend team might be: should we encapsulate the usage of our custom elements framework? Why would we want to 
 write this in our server side templates?
