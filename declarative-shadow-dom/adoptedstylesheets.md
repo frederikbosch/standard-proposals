@@ -215,7 +215,7 @@ When we could write this?
 ```
 
 So, what will inevitably happen is the creation of a custom elements registry at the server side level. Not only for elements created by the development teams,
-but also for the elements that are being consumed.
+but also for the elements that are being consumed from external libraries.
 
 ## Solution, consumption at the host
 
