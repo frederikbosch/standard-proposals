@@ -260,8 +260,9 @@ still have its `border-radius`.
 </fw-avatar>
 ```
 
-The last suggestion also solves problem 1 and 2. When `fw-avatar` is created dynamically, it automatically adopts the `fw-avatar` stylesheet because its `host-for` attribute by 
-default equals to its tag name. The framework designer can leave out the css in their component and supply default stylesheet with their library.
+The last suggestion solves problem 1. When `fw-avatar` is created dynamically through `document.createElement('fw-avatar')`, it automatically adopts the `fw-avatar` stylesheet 
+because its `host-for` attribute by default equals to its tag name. The framework designer can leave out the css in their component and supply default stylesheet with their library,
+like library designer have always done.
 
 Now if we would want to change the stylesheet into `my-fw-avatar`, we could decide to change the `host-for` attribute both contexts.
 
