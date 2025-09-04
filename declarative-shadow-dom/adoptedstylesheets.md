@@ -341,6 +341,8 @@ Now let's regenerate the source code of our discussion feed.
 <definition specifier="fw-avatar">...</definition>
 <definition specifier="fw-button">...</definition>
 <definition specifier="fw-dialog">...</definition>
+<!-- maybe packaged together? -->
+<link rel="definition" href="definitions.html" blocking="render">
 
 <discussion-feed id="feed">
   <discussion-message id="message-1234">
