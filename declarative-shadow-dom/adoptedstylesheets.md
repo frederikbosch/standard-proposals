@@ -319,7 +319,7 @@ const avatar = document.createElement('fw-avatar', {
 avatar.setAttribute('src', 'me.jpg');
 ```
 
-Or even better, combined with a `<definition>` suggestion I have seen somewhere (cannot recall where).
+Or, even better, combined with a `<definition>` suggestion I have seen somewhere (cannot recall where).
 
 ```html
 <definition specifier="fw-avatar">
