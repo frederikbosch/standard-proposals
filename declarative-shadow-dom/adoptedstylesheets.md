@@ -11,7 +11,9 @@ dynamically inside web applications, I am seeing at the least three problems wit
 
 1. [Rendering in both dynamic and static contexts](#problem-1)
 1. [`<template>` soup](#problem-2)
-1. Requirement of serverside custom elements registries for all elements
+1. [Requirement of serverside custom elements registries for all elements](#problem-3)
+
+After addressing these, I will propose [panother solution](#solution).
 
 <a name="problem-1"></a> 
 ### Problem 1: declarative and dynamic contexts: is my element ready to be displayed?
@@ -197,6 +199,7 @@ Such an example is becoming a very verbose. Especially when someone would like t
 elements would require a `<template>` tag with a required `shadowrootmode="open"` and a `shadowrootadoptedstylesheets` to make sure it is styled. The above also
 applies to shadow roots attached to non-custom elements.
 
+<a name="problem-3"></a> 
 ### Problem 3: complexity at the server side
 
 When rendering the document mentioned above, a discussion for backend team might be: should we encapsulate the usage of our custom elements framework? Why would we want to 
@@ -219,6 +222,7 @@ When we could write this?
 So, what will inevitably happen is the creation of a custom elements registry at the server side level. Not only for elements created by the development teams,
 but also for the elements that are being consumed from external libraries.
 
+<a name="solution"></a> 
 ## Solution, consumption at the host
 
 As I have already been suggesting in the reply to the [TAG design review request](https://github.com/w3ctag/design-reviews/issues/1000), I think modules should be consumed 
