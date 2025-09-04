@@ -293,7 +293,7 @@ if we combine it with the `@sheet` proposal as is also done by the current propo
 </style>
 
 <style type="module" specifier="fw-avatar">
-  @import("framework/fw-avatar");
+  @import("framework/fw_avatar");
 </style>
 
 <fw-avatar>
