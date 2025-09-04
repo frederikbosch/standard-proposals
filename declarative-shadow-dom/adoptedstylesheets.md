@@ -9,10 +9,11 @@ are adopted.
 Considering my experience in designing many custom elements, ones that are created both declaratively inside a server side application and 
 dynamically inside web applications, I am seeing at the least three problems with [the current proposal](https://github.com/MicrosoftEdge/MSEdgeExplainers/blob/main/ShadowDOM/explainer.md).
 
-1. Rendering in both dynamic and static contexts
-1. `<template>` soup
+1. [Rendering in both dynamic and static contexts](#problem-1)
+1. [`<template>` soup](#problem-2)
 1. Requirement of serverside custom elements registries for all elements
 
+<a name="problem-1"></a> 
 ### Problem 1: declarative and dynamic contexts: is my element ready to be displayed?
 
 This problem is only applicable to custom elements and not to Shadow DOMs linked to non-custom elements. Consider the following avatar custom 
@@ -109,6 +110,7 @@ import styles from 'fw-avatar' with { type: 'css' };
 So, if we want an optimal solution, we must change the `FwAvatar` class as such that the `fw-avatar` does not contain a stylesheet by default or this default stylesheet becomes 
 conditional. However,  a conditional stylesheet generates another problem, the import has to become a dynamic `import()` call or the raw css should also be embedded inside the custom element.
 
+<a name="problem-2"></a> 
 ### Problem 2: will we get a `<template>` soup, especially when using a ui-framework?
 
 Let's take an example of a custom element I have recently been working on: a discussion feed with messages and the possibility to reply. It
