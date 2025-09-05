@@ -49,7 +49,7 @@ for (const person of people) {
 
 Now, this creates a problem. When `fw-avatar` was parsed by the browser inside the response document, the `shadowrootadoptedstylesheets` attribute
 adopted the `CSSStyleSheet` created by the `<style>` tag into the [`host.shadowRoot`](https://developer.mozilla.org/en-US/docs/Web/API/ShadowRoot/adoptedStyleSheets).
-But now that the `fw-avatar` element is created dynamically in Javascript we need a second solution, one the second solution needs to verify the first solution is not
+But now that the `fw-avatar` element is created dynamically in Javascript we need a second solution, one that needs to verify the first solution is not
 applicable. This *could* look like this.
 
 ```js
