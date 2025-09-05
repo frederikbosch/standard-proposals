@@ -308,6 +308,8 @@ Hence, there is no requirement to change the `FwAvatar` class. But don't we now 
 if we combine it with the `@sheet` proposal as is also done by the current proposal.
 
 ```html
+<style type="module" specifier="my-fw-avatar">img { border-radius: 0; }</style>
+
 <style type="module" specifier="framework">
   @sheet fw_avatar {
     img { border-radius: 100%; }
@@ -316,6 +318,7 @@ if we combine it with the `@sheet` proposal as is also done by the current propo
 
 <style type="module" specifier="fw-avatar">
   @import("framework/fw_avatar");
+  @import("my-fw-avatar");
 </style>
 
 <fw-avatar>
