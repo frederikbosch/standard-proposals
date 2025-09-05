@@ -110,7 +110,8 @@ import styles from 'fw-avatar' with { type: 'css' };
 ```
 
 So, if we want an optimal solution, we must change the `FwAvatar` class as such that the `fw-avatar` does not contain a stylesheet by default or this default stylesheet becomes 
-conditional. However,  a conditional stylesheet generates another problem, the import has to become a dynamic `import()` call or the raw css should also be embedded inside the custom element.
+conditional. However, a conditional stylesheet generates another problem, the import has to become a dynamic `import()` call or the raw css should also be embedded inside the 
+custom element.
 
 <a name="problem-2"></a> 
 ### Problem 2: will we get a `<template>` soup, especially when using a ui-framework?
@@ -248,7 +249,7 @@ This would also work for shadow roots attached to other elements.
 </fw-avatar>
 ```
 
-Now, as a rule, we could say that the `host-for` attribute equals tag name, only in case of custom elements. This changes the first example into the following, and the image would
+Now, additionally, we could say that the `host-for` attribute equals tag name, only in case of custom elements. This changes the first example into the following, and the image would
 still have its `border-radius`.
 
 ```html
@@ -310,6 +311,7 @@ declarative templating. I think we'd have to consider this possibility.
 
 ```html
 <template type="module" specifier="fw-avatar">
+  <style type="module">img { border-radius: 100%; }</style>
   <img src="{{@src}}" alt="{{@name}}">
 </template>
 
@@ -318,6 +320,13 @@ declarative templating. I think we'd have to consider this possibility.
 ```
 
 ```js
+const avatar = document.createElement('fw-avatar', {
+  src: 'me.jpg',
+  name: 'My Name',
+});
+
+// or
+
 const avatar = document.createElement('fw-avatar', {
   attributes: {
     src: 'me.jpg',
@@ -412,4 +421,4 @@ attributes to the native `<button>` element.
 
 If we would ever get there, this would, among many others, generate a question. Is every client, like a search-engine, that receives such a HTTP response able to read such a 
 markup? Whatever the answer to that question is, using the `<template>` tag has become optional. They are not a requirement anymore for declarative custom elements
-in the `<body>` of our page, and this starts with the `host-for` attribute.
+in the `<body>` of our page, and this starts with the consumption of modules using the `host-for` attribute at the host element.
