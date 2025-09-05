@@ -253,9 +253,22 @@ This would also work for shadow roots attached to other elements.
 </fw-avatar>
 ```
 
-### `host-for` default to tag name for custom elements
 
-Now, additionally, we could say that the `host-for` attribute by default equals tag name, only in case of custom elements. This changes the first example into the following, and the 
+The `host-for` attribute would allow to consume multiple specifiers/stylesheets, just like the `shadowrootadoptedstylesheets` attribute in the current proposal.
+
+```html
+<style type="module" specifier="default-avatar">img { border-radius: 100%; }</style>
+<style type="module" specifier="specific-avatar">img { background: blue; }</style
+<div host-for="default-avatar specific-avatar">
+  <template shadowrootmode="open">
+    <img src="" alt="">
+  </template>
+</fw-avatar>
+```
+
+### `host-for` defaults to tag name for custom elements
+
+Now, additionally, we could say that the `host-for` attribute by default equals its tag name, only in case of custom elements. This changes the first example into the following, and the 
 image would still have its `border-radius`.
 
 ```html
@@ -271,18 +284,6 @@ The last suggestion solves problem 1. When `fw-avatar` is created dynamically th
 because its `host-for` attribute by default equals to its tag name. The `FwAvatar` class does not have to create code anymore in order to adopt a stylesheet. Hence, 
 the framework designer can supply a default stylesheet with their library, which is what library developers have always done. The client of the library can choose to add that 
 default stylesheet to the page or create another own stylesheet.
-
-The `host-for` attribute would allow to consume multiple specifiers/stylesheets, just like the `shadowrootadoptedstylesheets` attribute in the current proposal.
-
-```html
-<style type="module" specifier="default-avatar">img { border-radius: 100%; }</style>
-<style type="module" specifier="specific-avatar">img { background: blue; }</style
-<div host-for="default-avatar specific-avatar">
-  <template shadowrootmode="open">
-    <img src="" alt="">
-  </template>
-</fw-avatar>
-```
 
 ### Overwring default `host-for` attribute for custom elements
 
