@@ -227,7 +227,11 @@ but also for the elements that are being consumed from external libraries.
 ## Solution, consumption at the host
 
 As I have already been suggesting in the reply to the [TAG design review request](https://github.com/w3ctag/design-reviews/issues/1000), I think modules should be consumed 
-at the host element, not by the template tag. To take the example of the `fw-avatar`.
+at the host element, not by the template tag.
+
+### `host-for` attribute
+
+My suggestion is to add a `host-for` attribute to custom elements and elements that allow a Shadow DOM. To take the example of the `fw-avatar`.
 
 ```html
 <style type="module" specifier="fw-avatar">img { border-radius: 100%; }</style>
@@ -249,8 +253,10 @@ This would also work for shadow roots attached to other elements.
 </fw-avatar>
 ```
 
-Now, additionally, we could say that the `host-for` attribute equals tag name, only in case of custom elements. This changes the first example into the following, and the image would
-still have its `border-radius`.
+### `host-for` default to tag name for custom elements
+
+Now, additionally, we could say that the `host-for` attribute by default equals tag name, only in case of custom elements. This changes the first example into the following, and the 
+image would still have its `border-radius`.
 
 ```html
 <style type="module" specifier="fw-avatar">img { border-radius: 100%; }</style>
@@ -262,11 +268,25 @@ still have its `border-radius`.
 ```
 
 The last suggestion solves problem 1. When `fw-avatar` is created dynamically through `document.createElement('fw-avatar')`, it automatically adopts the `fw-avatar` stylesheet 
-because its `host-for` attribute by default equals to its tag name. The `FwAvatar` class does not have to adopt the stylesheet anymore for the element to receive style. Hence, 
-the framework designer can supply a default stylesheet with their library, like library developers have always done, and the client of the library can choose to add that to the 
-page or another stylesheet.
+because its `host-for` attribute by default equals to its tag name. The `FwAvatar` class does not have to create code anymore in order to adopt a stylesheet. Hence, 
+the framework designer can supply a default stylesheet with their library, which is what library developers have always done. The client of the library can choose to add that 
+default stylesheet to the page or create another own stylesheet.
 
-Now if we would want to change the stylesheet into `my-fw-avatar`, we could decide to change the `host-for` attribute both contexts.
+The `host-for` attribute would allow to consume multiple specifiers/stylesheets, just like the `shadowrootadoptedstylesheets` attribute in the current proposal.
+
+```html
+<style type="module" specifier="default-avatar">img { border-radius: 100%; }</style>
+<style type="module" specifier="specific-avatar">img { background: blue; }</style
+<div host-for="default-avatar specific-avatar">
+  <template shadowrootmode="open">
+    <img src="" alt="">
+  </template>
+</fw-avatar>
+```
+
+### Overwring default `host-for` attribute for custom elements
+
+Now if we would want to change the stylesheet into `my-fw-avatar`, we could decide to change the `host-for` attribute in both contexts.
 
 ```html
 <style type="module" specifier="my-fw-avatar">img { border-radius: 100%; }</style>
