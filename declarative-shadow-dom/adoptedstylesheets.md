@@ -117,8 +117,8 @@ custom element.
 ### Problem 2: will we get a `<template>` soup, especially when using a ui-framework?
 
 Let's take an example of a custom element I have recently been working on: a discussion feed with messages and the possibility to reply. It
-might be a requirement that such a feed be rendered declaratively. Reasons for such a requirement are discussed in another Github thread and
-therefore not given here. With the current proposals the response document might look like this.
+might be a requirement that such a feed be rendered declaratively. Reasons for such a requirement are [discussed in another Github thread](https://github.com/WICG/webcomponents/issues/1099)
+and therefore not given here. With the current proposals the response document might look like this.
 
 ```html
 <style type="module" specifier="discussion-feed">...</style>
